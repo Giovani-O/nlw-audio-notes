@@ -1,7 +1,18 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
+import { ChangeEvent, useState } from 'react'
 
 export function NewNoteCard() {
+  const [shouldShowOnboarding, setShouldShowOnboarding] = useState(true)
+
+  function handleStarteditor() {
+    setShouldShowOnboarding(false)
+  }
+
+  function handleContentChanged(event: ChangeEvent<HTMLTextAreaElement>) {
+    if (event.target.value === '') setShouldShowOnboarding(true)
+  }
+
   return (
     <Dialog.Root>
       <Dialog.Trigger className="rounded-md flex flex-col bg-slate-700 text-left p-5 gap-3 hover:ring-2 outline-none hover:ring-slate-600 transition-shadow focus-visible:ring-2 focus-visible:ring-lime-400">
@@ -25,17 +36,28 @@ export function NewNoteCard() {
             <span className="text-sm font-medium text-slate-300">
               Adicionar nota
             </span>
-            <p className="text-sm leading-6 text-slate-400">
-              Comece{' '}
-              <button className="font-medium text-lime-400 hover:underline transition-all">
-                gravando uma nota
-              </button>{' '}
-              em áudio ou se preferir{' '}
-              <button className="font-medium text-lime-400 hover:underline transition-all">
-                utilize apenas texto
-              </button>
-              .
-            </p>
+            {shouldShowOnboarding ? (
+              <p className="text-sm leading-6 text-slate-400">
+                Comece{' '}
+                <button className="font-medium text-lime-400 hover:underline transition-all">
+                  gravando uma nota
+                </button>{' '}
+                em áudio ou se preferir{' '}
+                <button
+                  className="font-medium text-lime-400 hover:underline transition-all"
+                  onClick={handleStarteditor}
+                >
+                  utilize apenas texto
+                </button>
+                .
+              </p>
+            ) : (
+              <textarea
+                autoFocus
+                className="text-sm leading-5 text-slate-400 bg-transparent resize-none flex-1 outline-none"
+                onChange={handleContentChanged}
+              />
+            )}
           </div>
 
           <button

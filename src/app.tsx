@@ -2,46 +2,12 @@ import { ChangeEvent, useState } from 'react'
 import logo from './assets/logo-nlw-expert.svg'
 import { NewNoteCard } from './components/new-note-card'
 import { NoteCard } from './components/note-card'
-
-interface Note {
-  id: string
-  date: Date
-  content: string
-}
+import { useNotesStore } from './store'
 
 export function App() {
+  const notesList = useNotesStore((store) => store.notes)
+
   const [search, setSearch] = useState('')
-  const [notes, setNotes] = useState<Note[]>(() => {
-    const storedNotes = localStorage.getItem('@notes-1.0.0')
-
-    if (storedNotes) {
-      return JSON.parse(storedNotes)
-    }
-
-    return []
-  })
-
-  function onNoteCreated(content: string) {
-    const newNote = {
-      id: crypto.randomUUID(),
-      date: new Date(),
-      content,
-    }
-
-    const notesArray = [newNote, ...notes]
-
-    setNotes(notesArray)
-    localStorage.setItem('@notes-1.0.0', JSON.stringify(notesArray))
-  }
-
-  function onNoteDeleted(id: string) {
-    const notesArray = notes.filter((note) => {
-      return note.id != id
-    })
-
-    setNotes(notesArray)
-    localStorage.setItem('@notes-1.0.0', JSON.stringify(notesArray))
-  }
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
     const query = event.target.value
@@ -51,10 +17,10 @@ export function App() {
 
   const filteredNotes =
     search !== ''
-      ? notes.filter((note) =>
+      ? notesList.filter((note) =>
           note.content.toLowerCase().includes(search.toLowerCase()),
         )
-      : notes
+      : notesList
 
   return (
     // Check Tailwind's docs for explanations abou the classes:
@@ -73,12 +39,10 @@ export function App() {
       <div className="h-px bg-slate-700" />
 
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
-        <NewNoteCard onNoteCreated={onNoteCreated} />
+        <NewNoteCard />
 
         {filteredNotes.map((note) => {
-          return (
-            <NoteCard key={note.id} note={note} onNoteDeleted={onNoteDeleted} />
-          )
+          return <NoteCard key={note.id} note={note} />
         })}
       </div>
     </main>

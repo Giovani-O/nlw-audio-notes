@@ -2,14 +2,13 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { toast } from 'sonner'
-
-interface NewNoteCardProps {
-  onNoteCreated: (content: string) => void
-}
+import { useNotesStore } from '../store'
 
 let speechRecognition: SpeechRecognition | null = null
 
-export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
+export function NewNoteCard() {
+  const addNote = useNotesStore((store) => store.addNote)
+
   const [shouldShowOnboarding, setShouldShowOnboarding] = useState(true)
   const [isRecording, setIsRecording] = useState(false)
   const [content, setContent] = useState('')
@@ -28,7 +27,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
     event.preventDefault()
 
     if (content !== '') {
-      onNoteCreated(content)
+      addNote(content)
       setContent('')
       setShouldShowOnboarding(true)
 
@@ -80,7 +79,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="rounded-md flex flex-col bg-slate-700 text-left p-5 gap-3 hover:ring-2 outline-none hover:ring-slate-600 transition-shadow focus-visible:ring-2 focus-visible:ring-lime-400">
+      <Dialog.Trigger className="rounded-md flex flex-col bg-slate-700 text-left p-5 gap-3 hover:ring-2 outline-none hover:ring-slate-600 transition-shadow focus-visible:ring-2 focus-visible:ring-violet-400">
         <span className="text-sm font-medium text-slate-200">
           Adicionar nota
         </span>
@@ -108,14 +107,14 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
                   <button
                     type="button"
                     onClick={handleStartRecording}
-                    className="font-medium text-lime-400 hover:underline transition-all"
+                    className="font-medium text-violet-400 hover:underline transition-all"
                   >
                     gravando uma nota
                   </button>{' '}
                   em áudio ou se preferir{' '}
                   <button
                     type="button"
-                    className="font-medium text-lime-400 hover:underline transition-all"
+                    className="font-medium text-violet-400 hover:underline transition-all"
                     onClick={handleStartEditor}
                   >
                     utilize apenas texto
@@ -145,7 +144,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
               <button
                 type="button"
                 onClick={handleSaveNote}
-                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500 transition-colors"
+                className="w-full bg-violet-400 py-4 text-center text-sm text-violet-950 outline-none font-medium hover:bg-violet-500 transition-colors"
               >
                 Salvar nota
               </button>

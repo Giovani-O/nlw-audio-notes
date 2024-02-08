@@ -2,6 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { X } from 'lucide-react'
+import { useNotesStore } from '../store'
 
 interface NoteCardProps {
   note: {
@@ -9,13 +10,18 @@ interface NoteCardProps {
     date: Date
     content: string
   }
-  onNoteDeleted: (id: string) => void
 }
 
-export function NoteCard({ note, onNoteDeleted }: NoteCardProps) {
+export function NoteCard({ note }: NoteCardProps) {
+  const deleteNote = useNotesStore((store) => store.deleteNote)
+
+  function handleDeleteNote(id: string) {
+    deleteNote(id)
+  }
+
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="rounded-md text-left flex flex-col bg-slate-800 p-5 gap-3 overflow-hidden relative hover:ring-2 outline-none hover:ring-slate-600 transition-shadow focus-visible:ring-2 focus-visible:ring-lime-400">
+      <Dialog.Trigger className="rounded-md text-left flex flex-col bg-slate-800 p-5 gap-3 overflow-hidden relative hover:ring-2 outline-none hover:ring-slate-600 transition-shadow focus-visible:ring-2 focus-visible:ring-violet-400">
         <span className="text-sm font-medium text-slate-300">
           {formatDistanceToNow(note.date, {
             locale: ptBR,
@@ -46,7 +52,7 @@ export function NoteCard({ note, onNoteDeleted }: NoteCardProps) {
 
           <button
             type="button"
-            onClick={() => onNoteDeleted(note.id)}
+            onClick={() => handleDeleteNote(note.id)}
             className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
           >
             Deseja{' '}
